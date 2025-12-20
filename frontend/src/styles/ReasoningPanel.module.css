@@ -1,0 +1,45 @@
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+.section {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--glass-border);
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    color: #e0e6ed;
+    line-height: 1.5;
+}
+
+.bullet {
+    margin-right: 0.75rem;
+    font-weight: bold;
+    color: var(--accent);
+    text-shadow: 0 0 5px var(--accent);
+}
