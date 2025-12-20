@@ -5,7 +5,7 @@ from routes.analyze import router as analyze_router
 from routes.download import router as download_router
 
 app = FastAPI(
-    title="MedTech Early Disease Prediction API",
+    title="Unmasking Silent Diseases - Early Disease Prediction API",
     version="1.0"
 )
 

@@ -14,7 +14,7 @@ export default function Upload() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Upload Report - Early Risk Prediction</title>
+                <title>Upload Report - Unmasking Silent Diseases</title>
             </Head>
 
             <main className={styles.main}>

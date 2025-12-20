@@ -378,7 +378,7 @@ class MedicalReportPDFGenerator:
         
         # Footer text
         elements.append(Spacer(1, 0.2*inch))
-        footer_text = "MedTech Early Risk Prediction System | AI-Powered Health Analytics"
+        footer_text = "Unmasking Silent Diseases | AI-Powered Health Analytics"
         footer_para = Paragraph(footer_text, ParagraphStyle(
             name='Footer',
             parent=self.styles['Normal'],

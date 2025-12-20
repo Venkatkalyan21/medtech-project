@@ -38,7 +38,7 @@ export default function Login() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Login - Early Risk Prediction</title>
+                <title>Login - Unmasking Silent Diseases</title>
             </Head>
 
             <ParticleBackground />
@@ -56,7 +56,7 @@ export default function Login() {
                     transition={{ delay: 0.2, duration: 0.6 }}
                 >
                     <div className={styles.logoIcon}>🏥</div>
-                    <h1 className={`${styles.logoText} glow-text`}>Early Risk Prediction</h1>
+                    <h1 className={`${styles.logoText} glow-text`}>Unmasking Silent Diseases</h1>
                     <p className={styles.tagline}>AI-Powered Health Analytics</p>
                 </motion.div>
 

@@ -1,4 +1,4 @@
-# 🏥 MedTech Early Risk Prediction System
+# 🏥 Unmasking Silent Diseases
 
 An AI-powered medical lab report analysis platform that provides early disease risk prediction, intelligent insights, and personalized health recommendations.
 
@@ -20,11 +20,10 @@ This project is a comprehensive healthcare solution that combines OCR technology
 ## 🏗️ Project Structure
 
 ```
-Agentathon/
+Unmasking Silent Diseases/
 ├── frontend/          # Next.js React frontend with 3D UI
 ├── backend/           # FastAPI backend server
-├── agent/             # Standalone AI agent system
-└── agentathon/        # Legacy/backup files
+└── agent/             # Standalone AI agent system
 ```
 
 ## 🚀 Technology Stack

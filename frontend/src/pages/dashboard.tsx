@@ -60,7 +60,7 @@ export default function Dashboard() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Health Dashboard - Early Risk Prediction</title>
+                <title>Health Dashboard - Unmasking Silent Diseases</title>
             </Head>
 
             <ParticleBackground />
