@@ -15,6 +15,7 @@ import AIInsightsPanel from '../components/AIInsightsPanel';
 import ParticleBackground from '../components/ParticleBackground';
 import HolographicCard from '../components/HolographicCard';
 import HealthSphere3D from '../components/HealthSphere3D';
+import DownloadButton from '../components/DownloadButton';
 import styles from '@/styles/Dashboard.module.css';
 
 export default function Dashboard() {
@@ -78,6 +79,12 @@ export default function Dashboard() {
                     <div className={styles.meta}>
                         <span className={styles.reportId}>Report ID: {reportId}</span>
                         <ConfidenceMeter score={analysis.confidence} />
+                        <DownloadButton
+                            analysisData={analysis}
+                            patientInfo={{
+                                id: reportId as string
+                            }}
+                        />
                     </div>
                 </motion.header>
 

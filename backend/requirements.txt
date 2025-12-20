@@ -1,0 +1,23 @@
+# Backend Requirements
+
+# FastAPI Framework
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# Database
+pymongo==4.6.1
+
+# OCR & PDF Processing
+pytesseract==0.3.10
+pdf2image==1.17.0
+Pillow==10.2.0
+
+# AI Agent
+google-generativeai==0.3.2
+
+# Utilities
+python-dotenv==1.0.0
+
+# PDF Generation
+reportlab==4.0.7
