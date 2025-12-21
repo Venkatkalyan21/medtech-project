@@ -5,10 +5,10 @@
 # ==============================================================================
 
 # User configuration (CHANGE THESE)
-PROJECT_ID="your-project-id"
+PROJECT_ID="my-login-project-481808"
 REGION="us-central1"
 REPOSITORY="medtech-images"
-MONGO_URI="your-mongodb-atlas-uri"
+MONGO_URI="mongodb+srv://pedro:pedro@cluster0.6qzqz.mongodb.net/medtech?retryWrites=true&w=majority&appName=medtech"
 GEMINI_API_KEY="your-gemini-key"
 NEXTAUTH_SECRET="your-secret-key"
 
