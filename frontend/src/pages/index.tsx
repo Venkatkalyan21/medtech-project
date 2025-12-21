@@ -13,7 +13,7 @@ export default function Home() {
     return (
         <div>
             <Head>
-                <title>Unmasking Silent Diseases</title>
+                <title>Clinical Insights Platform</title>
                 <meta name="description" content="AI-Driven Early Disease Detection System" />
             </Head>
             <p>Redirecting to login...</p>

@@ -60,7 +60,7 @@ export default function Dashboard() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Health Dashboard - Unmasking Silent Diseases</title>
+                <title>Dashboard | Clinical Insights Platform</title>
             </Head>
 
             <ParticleBackground />
@@ -73,7 +73,7 @@ export default function Dashboard() {
                     transition={{ duration: 0.8, type: 'spring' }}
                 >
                     <div>
-                        <h1 className={`${styles.title} glow-text`}>Health Analysis Dashboard</h1>
+                        <h1 className="professional-title">Clinical Health Analytics</h1>
                         <p className={styles.subtitle}>Comprehensive AI-powered health insights with 3D visualization</p>
                     </div>
                     <div className={styles.meta}>

@@ -24,6 +24,16 @@
   animation: textGlow 2s ease-in-out infinite alternate;
 }
 
+.professional-title {
+  background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
 @keyframes textGlow {
   from {
     text-shadow:

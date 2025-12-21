@@ -14,7 +14,7 @@ export default function Upload() {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Upload Report - Unmasking Silent Diseases</title>
+                <title>Upload | Clinical Insights Platform</title>
             </Head>
 
             <main className={styles.main}>
@@ -29,7 +29,7 @@ export default function Upload() {
                     <UploadReport onUploadComplete={handleUploadComplete} />
 
                     <div style={{ marginTop: '3rem', borderTop: '1px solid #333', paddingTop: '1rem' }}>
-                        <h3 className="glow-text" style={{ textAlign: 'center', marginBottom: '1rem' }}>Quick Tools</h3>
+                        <h3 className="professional-title" style={{ textAlign: 'center', marginBottom: '1rem', backgroundClip: 'text', WebkitBackgroundClip: 'text' }}>Quick Tools</h3>
                         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <button onClick={() => router.push('/heart')} className={styles.button} style={{ padding: '0.8rem 1.5rem', background: 'rgba(0,0,0,0.5)', border: '1px solid #00f3ff', color: '#00f3ff', borderRadius: '20px', cursor: 'pointer' }}>
                                 Heart Analysis
