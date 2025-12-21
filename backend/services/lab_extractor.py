@@ -8,7 +8,12 @@ def extract_lab_values(text):
         find = re.search(pattern, text, re.IGNORECASE)
         if find:
             try:
-                results[key] = float(find.group(2))
+                if key == "blood_pressure":
+                    # Store as a list [systolic, diastolic]
+                    results["bp_sys"] = float(find.group(2))
+                    results["bp_dia"] = float(find.group(3))
+                else:
+                    results[key] = float(find.group(2))
             except:
                 pass
     return results

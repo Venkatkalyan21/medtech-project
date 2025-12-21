@@ -53,8 +53,13 @@ async def analyze_report(report_id: str):
     alerts = check_abnormalities(lab_values)
     score = generate_health_score(alerts)
     
+    # ML Prediction (CKD Risk)
+    from services.ml_service import ml_service
+    ckd_input = ml_service.map_labs_to_ckd(lab_values)
+    ckd_result = ml_service.predict_ckd(ckd_input)
+    
     # Get AI-powered agent analysis
-    agent_analysis = get_agent_analysis(lab_values, alerts)
+    agent_analysis = get_agent_analysis(lab_values, alerts, ckd_result)
 
     reports_collection.update_one(
         {"report_id": report_id},
@@ -65,6 +70,7 @@ async def analyze_report(report_id: str):
                 "lab_values": lab_values,
                 "alerts": alerts,
                 "health_score": score,
+                "ml_prediction": ckd_result,
                 "agent_analysis": agent_analysis
             }
         }
@@ -78,5 +84,6 @@ async def analyze_report(report_id: str):
         "lab_values": lab_values,
         "alerts": alerts,
         "health_score": score,
+        "ml_prediction": ckd_result,
         "agent_analysis": agent_analysis
     }

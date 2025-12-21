@@ -39,5 +39,14 @@ lab_keywords = {
     "hdl": r"(hdl|hdl\s*cholesterol)\s*([\d.]+)",
     "ldl": r"(ldl|ldl\s*cholesterol)\s*([\d.]+)",
     "triglycerides": r"(triglycerides)\s*([\d.]+)",
+    
+    # Electrolytes
+    "sodium": r"(sodium|na\+)\s*([\d.]+)",
+    "potassium": r"(potassium|k\+)\s*([\d.]+)",
+    
+    # Urinalysis (often in hospital reports)
+    "specific_gravity": r"(specific\s*gravity|s\.g\.|sg)\s*([\d.]+)",
+    "urine_sugar": r"(urine\s*sugar|u\.sugar|su)\s*([\d.]+)",
+    "blood_pressure": r"(blood\s*pressure|bp|sys/dia)\s*(\d+)\s*/\s*(\d+)",
 }
 

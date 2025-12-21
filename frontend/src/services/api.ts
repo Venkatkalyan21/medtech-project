@@ -231,3 +231,35 @@ export const getAnalysis = async (reportId: string): Promise<RiskAnalysis> => {
         };
     }
 };
+
+export const predictHeart = async (data: any) => {
+    const response = await fetch('http://localhost:8000/predict/heart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Heart prediction failed');
+    return response.json();
+};
+
+export const predictFitbit = async (data: any) => {
+    const response = await fetch('http://localhost:8000/predict/fitbit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) throw new Error('Fitbit prediction failed');
+    return response.json();
+};
+
+export const predictCKD = async (data: any) => {
+    // Wrap data if not already wrapped (though UI should handle this)
+    const payload = data.data ? data : { data: data };
+    const response = await fetch('http://localhost:8000/predict/ckd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+    if (!response.ok) throw new Error('CKD prediction failed');
+    return response.json();
+};

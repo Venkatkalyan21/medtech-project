@@ -7,6 +7,7 @@ import ParticleBackground from '../components/ParticleBackground';
 import HolographicCard from '../components/HolographicCard';
 import styles from '@/styles/Login.module.css';
 
+
 export default function Login() {
     const router = useRouter();
     const [email, setEmail] = useState('');

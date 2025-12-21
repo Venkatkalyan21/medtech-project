@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.upload import router as upload_router
 from routes.analyze import router as analyze_router
 from routes.download import router as download_router
+from routes.ml_routes import router as ml_router
 
 app = FastAPI(
     title="Unmasking Silent Diseases - Early Disease Prediction API",
@@ -21,6 +22,7 @@ app.add_middleware(
 app.include_router(upload_router)
 app.include_router(analyze_router)
 app.include_router(download_router)
+app.include_router(ml_router)
 
 @app.get("/")
 def home():

@@ -122,13 +122,14 @@ def calculate_ckd_risk(lab_values, alerts):
     return risk_level, risk_score
 
 
-def get_agent_analysis(lab_values, alerts):
+def get_agent_analysis(lab_values, alerts, ckd_result=None):
     """
     Get complete agent analysis with AI explanations
     
     Args:
         lab_values: Dict of lab values from backend
         alerts: Dict of abnormality alerts from backend
+        ckd_result: Dict with 'prediction', 'probability' from ML model
         
     Returns:
         Dict with agent decision, explanation, and recommendations
@@ -136,8 +137,17 @@ def get_agent_analysis(lab_values, alerts):
     # Format data for agent
     formatted_results = format_lab_results_for_agent(lab_values, alerts)
     
-    # Calculate CKD risk
-    ckd_risk_level, ckd_risk_score = calculate_ckd_risk(lab_values, alerts)
+    # Use ML result if available, else fallback to rule-based calculation
+    if ckd_result and "prediction" in ckd_result:
+        ckd_risk_score = ckd_result.get("probability", 0.0)
+        # Map 0/1 prediction to level
+        if ckd_result["prediction"] == 1:
+            ckd_risk_level = "HIGH" if ckd_risk_score > 0.8 else "MODERATE"
+        else:
+            ckd_risk_level = "LOW"
+    else:
+        # Fallback to rule-based calculation
+        ckd_risk_level, ckd_risk_score = calculate_ckd_risk(lab_values, alerts)
     
     # Get agent analysis
     try:
