@@ -59,6 +59,10 @@ gcloud run deploy medtech-backend `
 
 # Capture the backend URL
 $BACKEND_URL = gcloud run services describe medtech-backend --region $REGION --format='value(status.url)'
+if (!$BACKEND_URL) {
+    Write-Host "ERROR: Backend deployment failed or URL could not be retrieved. Stopping." -ForegroundColor Red
+    exit 1
+}
 Write-Host "Backend deployed at: $BACKEND_URL" -ForegroundColor Green
 
 Write-Host "`n----------------------------------------------------"
