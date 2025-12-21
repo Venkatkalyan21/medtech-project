@@ -78,15 +78,27 @@ Write-Host "`n----------------------------------------------------"
 Write-Host "Step 5: Deploying Frontend to Cloud Run..."
 Write-Host "----------------------------------------------------"
 
+# Initial deployment to get the URL
 gcloud run deploy medtech-frontend `
     --image $FRONTEND_IMAGE `
     --region $REGION `
     --platform managed `
     --allow-unauthenticated `
-    --set-env-vars="NEXT_PUBLIC_API_URL=$BACKEND_URL,NEXTAUTH_URL=http://localhost:3000,NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
+    --set-env-vars="NEXT_PUBLIC_API_URL=$BACKEND_URL,NEXTAUTH_URL=http://temp.url,NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
+
+# Capture the frontend URL
+$FRONTEND_URL = gcloud run services describe medtech-frontend --region $REGION --format='value(status.url)'
+Write-Host "Frontend URL captured: $FRONTEND_URL" -ForegroundColor Green
+
+# Update the frontend with the correct NEXTAUTH_URL for production
+Write-Host "Updating Frontend with production NEXTAUTH_URL..."
+gcloud run services update medtech-frontend `
+    --region $REGION `
+    --set-env-vars="NEXT_PUBLIC_API_URL=$BACKEND_URL,NEXTAUTH_URL=$FRONTEND_URL,NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
 
 Write-Host "`n----------------------------------------------------"
 Write-Host "DEPLOYMENT COMPLETE!" -ForegroundColor Green
 Write-Host "----------------------------------------------------"
-gcloud run services list
+Write-Host "FRONTEND: $FRONTEND_URL" -ForegroundColor Cyan
+Write-Host "BACKEND:  $BACKEND_URL" -ForegroundColor Cyan
 Set-Location $Root

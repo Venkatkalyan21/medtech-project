@@ -53,7 +53,7 @@ export const uploadReport = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${API_URL}/analyze/upload`, {
+    const response = await fetch(`${API_URL}/upload/`, {
         method: 'POST',
         body: formData,
     });
@@ -68,8 +68,10 @@ export const uploadReport = async (file: File): Promise<string> => {
 
 export const getAnalysis = async (reportId: string): Promise<RiskAnalysis> => {
     try {
-        // Call the real backend API
-        const response = await fetch(`${API_URL}/analyze/${reportId}`);
+        // Call the real backend API (must be POST as per backend/routes/analyze.py)
+        const response = await fetch(`${API_URL}/analyze/${reportId}`, {
+            method: 'POST',
+        });
 
         if (!response.ok) {
             throw new Error('Analysis fetch failed');

@@ -6,6 +6,7 @@ from datetime import datetime
 router = APIRouter(prefix="/upload", tags=["Upload"])
 
 UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @router.post("/")
 async def upload_report(file: UploadFile = File(...)):
