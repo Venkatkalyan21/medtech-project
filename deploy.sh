@@ -8,9 +8,9 @@
 PROJECT_ID="my-login-project-481808"
 REGION="us-central1"
 REPOSITORY="medtech-images"
-MONGO_URI="mongodb+srv://pedro:pedro@cluster0.6qzqz.mongodb.net/medtech?retryWrites=true&w=majority&appName=medtech"
-GEMINI_API_KEY="your-gemini-key"
-NEXTAUTH_SECRET="your-secret-key"
+MONGO_URI="mongodb+srv://rahulrrk2807_db_user:axnU93xoK3bkFCnm@medtech.8rnmzbj.mongodb.net/?appName=medtech"
+GEMINI_API_KEY="AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
+NEXTAUTH_SECRET="f63c9a1d4b2e8f5a6c7d8e9f0a1b2c3d4"
 
 echo "----------------------------------------------------"
 echo "🛠️ Configuring Google Cloud Architecture..."
