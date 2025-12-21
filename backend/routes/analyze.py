@@ -20,7 +20,7 @@ async def analyze_report(report_id: str):
     report = reports_collection.find_one({"report_id": report_id})
     
     
-    file_path = os.path.join("uploads", report["file_name"])
+    file_path = os.path.join("/tmp/uploads", report["file_name"])
 
     try:
         extracted_text = extract_text_from_pdf(file_path)
