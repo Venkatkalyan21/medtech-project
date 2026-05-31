@@ -6,6 +6,7 @@ This agent decides the explanation flow and generates medical insights using Goo
 import google.generativeai as genai
 from typing import Dict, List, Any
 from enum import Enum
+import os
 
 
 class LabValueStatus(str, Enum):
@@ -282,8 +283,11 @@ Format: Return only the numbered list, one recommendation per line."""
 
 # Example usage
 if __name__ == "__main__":
-    # Initialize agent with API key
-    API_KEY = "AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
+    # Initialize agent with API key from environment variable
+    API_KEY = os.getenv("GEMINI_API_KEY")
+    if not API_KEY:
+        raise ValueError("GEMINI_API_KEY environment variable not set")
+    
     agent = MedicalAgent(api_key=API_KEY)
     
     # Sample lab results (this would come from your friend's backend)
