@@ -72,7 +72,7 @@ The agent can:
 
 The Google Gemini LLM integration is configured correctly. If you experience timeouts:
 - This is typically due to network connectivity
-- The API key is valid and configured
+- The API key is loaded from the `GEMINI_API_KEY` environment variable
 - The agent will work when called from your friend's backend
 
 ## How to Use
@@ -80,8 +80,8 @@ The Google Gemini LLM integration is configured correctly. If you experience tim
 ```python
 from agent_system import MedicalAgent
 
-# Initialize
-agent = MedicalAgent(api_key="AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU")
+# Initialize - API key is loaded from GEMINI_API_KEY environment variable
+agent = MedicalAgent()
 
 # Use with your friend's backend data
 result = agent.analyze_and_explain(
@@ -96,12 +96,34 @@ explanation = result["medical_explanation"]
 recommendations = result["recommendations"]
 ```
 
+## Setting Environment Variables
+
+Before running your script, set the API key:
+
+```bash
+# Linux/macOS
+export GEMINI_API_KEY="your-api-key-here"
+python test_agent.py
+
+# Windows (PowerShell)
+$env:GEMINI_API_KEY="your-api-key-here"
+python test_agent.py
+```
+
+Or create a `.env` file in the project root:
+```
+GEMINI_API_KEY=your-api-key-here
+MONGO_URI=your-mongodb-uri
+NEXTAUTH_SECRET=your-nextauth-secret
+```
+
 ## Next Steps
 
 1. ✅ Agent is ready to integrate with your friend's backend
 2. ✅ Share the `agent/` folder with your friend
 3. ✅ Your friend can import and use `MedicalAgent` class
 4. ✅ The agent will generate AI explanations when called
+5. ✅ Secrets are now managed securely via environment variables
 
 ---
 

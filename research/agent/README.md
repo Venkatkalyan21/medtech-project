@@ -1,30 +1,67 @@
-# Medical Lab Report Analysis - Agent System
+# Initialize with your API key
 
-## 🤖 What is This?
+## Setting Up the Agent
 
-This is a standalone **intelligent agent** that analyzes medical lab results and generates AI-powered explanations using Google Gemini.
+Before using the medical agent, you need to set up your Google Gemini API key.
 
-Your friend handles the backend (OCR, parsing, rule engine, ML model), and this agent takes the results and:
-1. **Decides** how to explain the results (priority, urgency, tone)
-2. **Generates** medical explanations using AI
-3. **Creates** personalized recommendations
-
-## 🚀 Quick Start
-
-### 1. Install Dependencies
+### Option 1: Environment Variable
 
 ```bash
-cd agent
-pip install -r requirements.txt
+# Linux/macOS
+export GEMINI_API_KEY="your-api-key-here"
+
+# Windows (PowerShell)
+$env:GEMINI_API_KEY="your-api-key-here"
 ```
 
-### 2. Use the Agent
+Then initialize the agent:
 
 ```python
 from agent_system import MedicalAgent
-\
 
-# Your friend's backend provides this data
+# API key is automatically loaded from environment variable
+agent = MedicalAgent()
+```
+
+### Option 2: .env File
+
+Create a `.env` file in the project root:
+
+```
+GEMINI_API_KEY=your-api-key-here
+MONGO_URI=your-mongodb-uri
+NEXTAUTH_SECRET=your-nextauth-secret
+```
+
+Then use a library like `python-dotenv` to load it:
+
+```python
+from dotenv import load_dotenv
+from agent_system import MedicalAgent
+
+load_dotenv()
+agent = MedicalAgent()
+```
+
+### Option 3: Pass API Key Directly (Not Recommended for Production)
+
+```python
+from agent_system import MedicalAgent
+
+agent = MedicalAgent(api_key="your-api-key-here")
+```
+
+⚠️ **Never commit API keys to version control!**
+
+## Usage Example
+
+```python
+from agent_system import MedicalAgent
+
+# Initialize agent
+agent = MedicalAgent()
+
+# Prepare lab results
 lab_results = {
     "creatinine": {
         "value": 1.8,
@@ -40,170 +77,41 @@ lab_results = {
     }
 }
 
-# Run the agent
+# Analyze results
 result = agent.analyze_and_explain(
     lab_results=lab_results,
     ckd_risk_level="MODERATE",
     ckd_risk_score=0.35
 )
 
-# Get the results
-print(result["agent_decision"])      # Agent's decision
-print(result["medical_explanation"]) # AI explanation
-print(result["recommendations"])     # Recommendations
+# Use the results
+print(result["medical_explanation"])
+for recommendation in result["recommendations"]:
+    print(recommendation)
 ```
 
-## 📋 Input Format
+## Security Best Practices
 
-Your friend's backend should provide:
+1. **Never hardcode API keys** in your source code
+2. **Use environment variables** for sensitive credentials
+3. **Add `.env` to `.gitignore`** to prevent accidental commits
+4. **Rotate API keys** regularly
+5. **Use different keys** for development, staging, and production
 
-```python
-{
-    "lab_results": {
-        "lab_name": {
-            "value": float,
-            "unit": str,
-            "status": "LOW" | "NORMAL" | "HIGH",
-            "reference_range": str
-        }
-    },
-    "ckd_risk_level": "LOW" | "MODERATE" | "HIGH" | "VERY_HIGH",
-    "ckd_risk_score": float  # 0.0 to 1.0
-}
-```
+## Troubleshooting
 
-## 📤 Output Format
+### Error: "GEMINI_API_KEY environment variable is not set"
 
-The agent returns:
-
-```python
-{
-    "agent_decision": {
-        "priority_level": str,           # routine, elevated, high, critical
-        "focus_areas": list,             # Abnormal lab values
-        "explanation_depth": str,        # standard, detailed, comprehensive
-        "should_recommend_specialist": bool,
-        "urgency": str,                  # routine, scheduled, soon, immediate
-        "key_concerns": list,            # Medical concerns
-        "explanation_tone": str          # How to communicate
-    },
-    "medical_explanation": str,          # AI-generated explanation
-    "recommendations": list              # List of recommendations
-}
-```
-
-## 🧪 Test the Agent
-
-Run the example:
+Make sure you've set the environment variable before running your script:
 
 ```bash
-python agent_system.py
+export GEMINI_API_KEY="your-api-key-here"
+python your_script.py
 ```
 
-This will show you how the agent works with sample data.
+### Error: "Could not authenticate with the provided API key"
 
-## 🔗 Integration with Backend
-
-Your friend's backend should call the agent like this:
-
-```python
-# After getting lab results, rule engine output, and ML prediction
-from agent_system import MedicalAgent
-
-agent = MedicalAgent(api_key="YOUR_API_KEY")
-
-# Get agent analysis
-agent_result = agent.analyze_and_explain(
-    lab_results=classified_lab_results,
-    ckd_risk_level=ml_prediction_level,
-    ckd_risk_score=ml_prediction_score
-)
-
-# Add to API response
-response = {
-    "lab_values": classified_lab_results,
-    "ckd_risk": {
-        "level": ml_prediction_level,
-        "score": ml_prediction_score
-    },
-    "agent_decision": agent_result["agent_decision"],
-    "medical_explanation": agent_result["medical_explanation"],
-    "recommendations": agent_result["recommendations"]
-}
-```
-
-## 🎯 What the Agent Does
-
-### 1. Decision Making
-- Analyzes risk level and lab results
-- Determines priority and urgency
-- Identifies focus areas
-- Decides if specialist is needed
-
-### 2. AI Explanation
-- Uses Google Gemini to generate explanations
-- Tailors tone based on severity
-- Explains in patient-friendly language
-- Provides context for abnormal values
-
-### 3. Recommendations
-- Generates personalized advice
-- Suggests lifestyle changes
-- Recommends follow-up actions
-- Indicates when to seek help
-
-## 🔑 API Key
-
-Your API key is already configured in the code:
-```
-
-```
-
-## 📝 Example Output
-
-```
-AGENT DECISION:
-priority_level: elevated
-focus_areas: ['creatinine', 'egfr']
-explanation_depth: detailed
-should_recommend_specialist: True
-urgency: scheduled
-key_concerns: ['Elevated risk of chronic kidney disease']
-explanation_tone: informative_and_cautious
-
-MEDICAL EXPLANATION:
-Your lab results show some concerning values that require attention...
-[AI-generated detailed explanation]
-
-RECOMMENDATIONS:
-1. Schedule an appointment with a nephrologist within 2-4 weeks
-2. Increase water intake to 8-10 glasses per day
-3. Reduce sodium intake to less than 2,300mg daily
-...
-```
-
-## 🤝 Working with Your Friend
-
-**Your friend provides:**
-- PDF upload
-- OCR text extraction
-- Lab value parsing
-- Rule engine (LOW/NORMAL/HIGH)
-- ML model (CKD risk prediction)
-
-**Your agent provides:**
-- Intelligent decision-making
-- AI-powered explanations
-- Personalized recommendations
-
-**Together:** Complete medical analysis pipeline!
-
-## 📦 Files
-
-- `agent_system.py` - Main agent code
-- `requirements.txt` - Dependencies
-- `README.md` - This file
-
----
-
-**Your agent is ready to use!** 🎉
+Check that:
+- Your API key is valid
+- Your Google Cloud project has the Generative AI API enabled
+- You have the correct permissions in your Google Cloud account

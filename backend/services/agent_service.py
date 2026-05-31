@@ -2,10 +2,14 @@
 Agent Service Wrapper
 Integrates the Medical Agent with the backend
 """
+import os
 from services.agent_system import MedicalAgent
 
-# Initialize agent with API key
-API_KEY = "AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
+# Load API key from environment variable
+API_KEY = os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
+
 agent = MedicalAgent(api_key=API_KEY)
 
 
@@ -102,73 +106,16 @@ def calculate_ckd_risk(lab_values, alerts):
     # BUN-based risk
     if bun is not None:
         if bun > 40:
-            risk_score += 0.15
+            risk_score += 0.2
         elif bun > 25:
-            risk_score += 0.08
-    
-    # Cap at 1.0
-    risk_score = min(risk_score, 1.0)
+            risk_score += 0.1
     
     # Determine risk level
-    if risk_score >= 0.7:
-        risk_level = "VERY_HIGH"
-    elif risk_score >= 0.5:
+    if risk_score >= 0.35:
         risk_level = "HIGH"
-    elif risk_score >= 0.25:
+    elif risk_score >= 0.2:
         risk_level = "MODERATE"
     else:
         risk_level = "LOW"
     
     return risk_level, risk_score
-
-
-def get_agent_analysis(lab_values, alerts, ckd_result=None):
-    """
-    Get complete agent analysis with AI explanations
-    
-    Args:
-        lab_values: Dict of lab values from backend
-        alerts: Dict of abnormality alerts from backend
-        ckd_result: Dict with 'prediction', 'probability' from ML model
-        
-    Returns:
-        Dict with agent decision, explanation, and recommendations
-    """
-    # Format data for agent
-    formatted_results = format_lab_results_for_agent(lab_values, alerts)
-    
-    # Use ML result if available, else fallback to rule-based calculation
-    if ckd_result and "prediction" in ckd_result:
-        ckd_risk_score = ckd_result.get("probability", 0.0)
-        # Map 0/1 prediction to level
-        if ckd_result["prediction"] == 1:
-            ckd_risk_level = "HIGH" if ckd_risk_score > 0.8 else "MODERATE"
-        else:
-            ckd_risk_level = "LOW"
-    else:
-        # Fallback to rule-based calculation
-        ckd_risk_level, ckd_risk_score = calculate_ckd_risk(lab_values, alerts)
-    
-    # Get agent analysis
-    try:
-        result = agent.analyze_and_explain(
-            lab_results=formatted_results,
-            ckd_risk_level=ckd_risk_level,
-            ckd_risk_score=ckd_risk_score
-        )
-        return {
-            "ckd_risk_level": ckd_risk_level,
-            "ckd_risk_score": ckd_risk_score,
-            "agent_decision": result["agent_decision"],
-            "medical_explanation": result["medical_explanation"],
-            "recommendations": result["recommendations"]
-        }
-    except Exception as e:
-        # Fallback if agent fails
-        return {
-            "ckd_risk_level": ckd_risk_level,
-            "ckd_risk_score": ckd_risk_score,
-            "agent_decision": None,
-            "medical_explanation": f"Agent analysis unavailable: {str(e)}",
-            "recommendations": ["Please consult with your healthcare provider"]
-        }

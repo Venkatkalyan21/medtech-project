@@ -1,88 +1,48 @@
 """
-Intelligent Agent for Medical Lab Report Analysis
-This agent decides the explanation flow and generates medical insights using Google Gemini
+Medical Agent System
+Leverages Google Gemini LLM for intelligent analysis of lab results
 """
-
-import google.generativeai as genai
+import os
 from typing import Dict, List, Any
-from enum import Enum
-
-
-class LabValueStatus(str, Enum):
-    """Lab value status"""
-    LOW = "LOW"
-    NORMAL = "NORMAL"
-    HIGH = "HIGH"
-
-
-class CKDRiskLevel(str, Enum):
-    """CKD risk levels"""
-    LOW = "LOW"
-    MODERATE = "MODERATE"
-    HIGH = "HIGH"
-    VERY_HIGH = "VERY_HIGH"
-
+import google.generativeai as genai
 
 class MedicalAgent:
-    """
-    Intelligent agent that analyzes lab results and generates medical explanations
-    """
-    
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """
-        Initialize the agent with Google Gemini API
+        Initialize the Medical Agent
         
         Args:
-            api_key: Google Gemini API key
+            api_key: Google Gemini API key (if None, loads from GEMINI_API_KEY env var)
         """
+        if api_key is None:
+            api_key = os.getenv("GEMINI_API_KEY")
+        
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY environment variable is not set")
+        
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel("gemini-pro")
     
-    def analyze_and_explain(
-        self,
-        lab_results: Dict[str, Dict],
-        ckd_risk_level: str,
-        ckd_risk_score: float
-    ) -> Dict[str, Any]:
+    def analyze_and_explain(self, lab_results: Dict, ckd_risk_level: str, ckd_risk_score: float) -> Dict:
         """
-        Complete agent workflow: analyze results and generate explanation
+        Analyze lab results and provide medical explanation
         
         Args:
-            lab_results: Dictionary of lab values with their classifications
-                Example: {
-                    "creatinine": {
-                        "value": 1.8,
-                        "unit": "mg/dL",
-                        "status": "HIGH",
-                        "reference_range": "0.7 - 1.3"
-                    }
-                }
-            ckd_risk_level: CKD risk level (LOW, MODERATE, HIGH, VERY_HIGH)
-            ckd_risk_score: Risk score between 0.0 and 1.0
+            lab_results: Dict of lab results with values, units, status, reference ranges
+            ckd_risk_level: Risk level (LOW, MODERATE, HIGH)
+            ckd_risk_score: Risk score (0.0 to 1.0)
             
         Returns:
-            Dictionary containing:
-                - agent_decision: Decision details
-                - medical_explanation: AI-generated explanation
-                - recommendations: List of recommendations
+            Dict with agent_decision, medical_explanation, and recommendations
         """
-        # Step 1: Agent Decision - Analyze the situation
+        # Step 1: Make intelligent decision
         agent_decision = self._make_decision(lab_results, ckd_risk_level, ckd_risk_score)
         
         # Step 2: Generate medical explanation using LLM
-        medical_explanation = self._generate_explanation(
-            lab_results, 
-            ckd_risk_level, 
-            ckd_risk_score, 
-            agent_decision
-        )
+        medical_explanation = self._generate_explanation(lab_results, ckd_risk_level, agent_decision)
         
         # Step 3: Generate recommendations
-        recommendations = self._generate_recommendations(
-            lab_results, 
-            ckd_risk_level, 
-            agent_decision
-        )
+        recommendations = self._generate_recommendations(lab_results, ckd_risk_level, agent_decision)
         
         return {
             "agent_decision": agent_decision,
@@ -90,153 +50,76 @@ class MedicalAgent:
             "recommendations": recommendations
         }
     
-    def _make_decision(
-        self,
-        lab_results: Dict[str, Dict],
-        ckd_risk_level: str,
-        ckd_risk_score: float
-    ) -> Dict[str, Any]:
+    def _make_decision(self, lab_results: Dict, ckd_risk_level: str, ckd_risk_score: float) -> Dict[str, Any]:
         """
-        Agent decision-making: Determine how to handle the analysis
+        Make intelligent decision based on lab results
         """
-        # Determine priority level
-        priority_map = {
-            "LOW": "routine",
-            "MODERATE": "elevated",
-            "HIGH": "high",
-            "VERY_HIGH": "critical"
+        decision = {
+            "priority_level": "normal",
+            "urgency": "routine",
+            "focus_areas": [],
+            "explanation_depth": "basic",
+            "should_recommend_specialist": False,
+            "explanation_tone": "neutral",
+            "key_concerns": []
         }
-        priority = priority_map.get(ckd_risk_level, "routine")
         
-        # Identify focus areas (abnormal values)
-        focus_areas = [
-            lab_name for lab_name, result in lab_results.items()
-            if result.get("status") in ["LOW", "HIGH"]
-        ]
+        # Analyze abnormalities
+        abnormal_tests = [name for name, result in lab_results.items() if result.get("status") == "HIGH" or result.get("status") == "LOW"]
         
-        # Determine explanation depth
-        if ckd_risk_level in ["HIGH", "VERY_HIGH"]:
-            depth = "comprehensive"
+        if abnormal_tests:
+            decision["focus_areas"] = abnormal_tests
+        
+        # Risk-based adjustments
+        if ckd_risk_level == "HIGH":
+            decision["priority_level"] = "elevated"
+            decision["urgency"] = "urgent"
+            decision["explanation_depth"] = "detailed"
+            decision["should_recommend_specialist"] = True
+            decision["explanation_tone"] = "informative_and_cautious"
+            decision["key_concerns"].append("Elevated risk of chronic kidney disease")
         elif ckd_risk_level == "MODERATE":
-            depth = "detailed"
+            decision["priority_level"] = "elevated"
+            decision["urgency"] = "scheduled"
+            decision["explanation_depth"] = "detailed"
+            decision["should_recommend_specialist"] = True
+            decision["explanation_tone"] = "informative_and_cautious"
+            decision["key_concerns"].append("Moderate risk of chronic kidney disease")
         else:
-            depth = "standard"
+            decision["priority_level"] = "normal"
+            decision["urgency"] = "routine"
+            decision["explanation_depth"] = "basic"
+            decision["explanation_tone"] = "neutral"
         
-        # Should recommend specialist?
-        abnormal_count = len(focus_areas)
-        should_see_specialist = (
-            ckd_risk_level in ["HIGH", "VERY_HIGH"] or 
-            abnormal_count >= 3
-        )
-        
-        # Assess urgency
-        urgency_map = {
-            "VERY_HIGH": "immediate",
-            "HIGH": "soon",
-            "MODERATE": "scheduled",
-            "LOW": "routine"
-        }
-        urgency = urgency_map.get(ckd_risk_level, "routine")
-        
-        # Identify key concerns
-        concerns = []
-        for lab_name, result in lab_results.items():
-            value = result.get("value")
-            status = result.get("status")
-            
-            if lab_name == "egfr" and value and value < 30:
-                concerns.append("Severely reduced kidney function")
-            elif lab_name == "creatinine" and value and value > 2.0:
-                concerns.append("Significantly elevated creatinine")
-            elif lab_name == "bun" and value and value > 40:
-                concerns.append("High blood urea nitrogen")
-            elif lab_name == "albumin" and value and value < 3.0:
-                concerns.append("Low albumin levels")
-        
-        if ckd_risk_level in ["HIGH", "VERY_HIGH"]:
-            concerns.append("Elevated risk of chronic kidney disease")
-        
-        if not concerns:
-            concerns = ["No major concerns identified"]
-        
-        # Determine tone
-        tone_map = {
-            "VERY_HIGH": "serious_but_supportive",
-            "HIGH": "concerned_but_reassuring",
-            "MODERATE": "informative_and_cautious",
-            "LOW": "reassuring_and_educational"
-        }
-        tone = tone_map.get(ckd_risk_level, "reassuring_and_educational")
-        
-        return {
-            "priority_level": priority,
-            "focus_areas": focus_areas,
-            "explanation_depth": depth,
-            "should_recommend_specialist": should_see_specialist,
-            "urgency": urgency,
-            "key_concerns": concerns,
-            "explanation_tone": tone
-        }
+        return decision
     
-    def _generate_explanation(
-        self,
-        lab_results: Dict[str, Dict],
-        ckd_risk_level: str,
-        ckd_risk_score: float,
-        agent_decision: Dict[str, Any]
-    ) -> str:
+    def _generate_explanation(self, lab_results: Dict, ckd_risk_level: str, agent_decision: Dict) -> str:
         """
-        Generate medical explanation using Google Gemini LLM
+        Generate medical explanation using LLM
         """
-        # Build prompt
-        lab_summary = []
-        for lab_name, result in lab_results.items():
-            lab_summary.append(
-                f"- {lab_name.upper()}: {result.get('value')} {result.get('unit')} "
-                f"(Status: {result.get('status')}, Reference: {result.get('reference_range')})"
-            )
+        lab_brief = ", ".join([
+            f"{name}: {result.get('value')} ({result.get('status')})"
+            for name, result in lab_results.items()
+        ])
         
-        lab_summary_text = "\n".join(lab_summary)
+        prompt = f"""Based on these lab results and CKD risk assessment, provide a brief medical explanation.
+
+**Lab Results Summary:**
+{lab_brief}
+
+**CKD Risk Level:** {ckd_risk_level}
+**Should See Specialist:** {agent_decision.get('should_recommend_specialist', False)}
+**Urgency:** {agent_decision.get('urgency', 'routine')}
+
+Provide a concise, professional medical explanation suitable for a healthcare provider dashboard."""
         
-        prompt = f"""You are a medical AI assistant helping to explain lab test results to patients. 
-Your role is to provide clear, accurate, and compassionate explanations.
-
-**Lab Test Results:**
-{lab_summary_text}
-
-**CKD Risk Assessment:**
-- Risk Level: {ckd_risk_level}
-- Risk Score: {ckd_risk_score:.2%}
-
-**Analysis Context:**
-- Priority: {agent_decision.get('priority_level', 'routine')}
-- Focus Areas: {', '.join(agent_decision.get('focus_areas', []))}
-- Key Concerns: {', '.join(agent_decision.get('key_concerns', []))}
-- Urgency: {agent_decision.get('urgency', 'routine')}
-
-**Instructions:**
-1. Provide a clear, patient-friendly explanation of the lab results
-2. Explain what each abnormal value means in simple terms
-3. Discuss the CKD risk level and what it indicates
-4. Use a {agent_decision.get('explanation_tone', 'reassuring')} tone
-5. Provide {agent_decision.get('explanation_depth', 'standard')} level of detail
-6. Avoid medical jargon where possible, or explain it when necessary
-7. Be empathetic and supportive
-
-Please generate a comprehensive medical explanation based on these results."""
-
         try:
             response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
-            return f"Error generating explanation: {str(e)}"
+            return f"Unable to generate explanation: {str(e)}"
     
-    def _generate_recommendations(
-        self,
-        lab_results: Dict[str, Dict],
-        ckd_risk_level: str,
-        agent_decision: Dict[str, Any]
-    ) -> List[str]:
+    def _generate_recommendations(self, lab_results: Dict, ckd_risk_level: str, agent_decision: Dict) -> List[str]:
         """
         Generate personalized recommendations using LLM
         """
@@ -262,7 +145,7 @@ Provide recommendations as a numbered list. Include:
 5. When to seek medical attention
 
 Format: Return only the numbered list, one recommendation per line."""
-
+        
         try:
             response = self.model.generate_content(prompt)
             # Parse the response into a list
@@ -282,9 +165,9 @@ Format: Return only the numbered list, one recommendation per line."""
 
 # Example usage
 if __name__ == "__main__":
-    # Initialize agent with API key
-    API_KEY = "AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
-    agent = MedicalAgent(api_key=API_KEY)
+    # Initialize agent with API key from environment variable
+    # Set GEMINI_API_KEY environment variable before running
+    agent = MedicalAgent()
     
     # Sample lab results (this would come from your friend's backend)
     sample_lab_results = {

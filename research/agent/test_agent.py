@@ -1,14 +1,21 @@
 """
 Test agent decision-making (without LLM calls)
 """
+import os
 from agent_system import MedicalAgent
 
 print("Testing Agent Decision-Making Logic...")
 print("=" * 60)
 
+# Set environment variable or get from OS
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    print("⚠️  WARNING: GEMINI_API_KEY environment variable not set")
+    print("Set it with: export GEMINI_API_KEY='your-api-key'")
+    api_key = "dummy_key_for_testing"
+
 # Initialize agent
-API_KEY = "AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
-agent = MedicalAgent(api_key=API_KEY)
+agent = MedicalAgent(api_key=api_key)
 print("✓ Agent initialized\n")
 
 # Sample lab results

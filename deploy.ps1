@@ -6,9 +6,18 @@
 $PROJECT_ID = "my-login-project-481808"
 $REGION = "us-central1"
 $REPOSITORY = "medtech-images"
-$MONGO_URI = "mongodb+srv://rahulrrk2807_db_user:axnU93xoK3bkFCnm@medtech.8rnmzbj.mongodb.net/?appName=medtech"
-$GEMINI_API_KEY = "AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU"
-$NEXTAUTH_SECRET = "f63c9a1d4b2e8f5a6c7d8e9f0a1b2c3d4"
+
+# Use environment variables for sensitive data
+$MONGO_URI = $env:MONGO_URI
+$GEMINI_API_KEY = $env:GEMINI_API_KEY
+$NEXTAUTH_SECRET = $env:NEXTAUTH_SECRET
+
+# Check if required env vars are set
+if ([string]::IsNullOrEmpty($MONGO_URI) -or [string]::IsNullOrEmpty($GEMINI_API_KEY) -or [string]::IsNullOrEmpty($NEXTAUTH_SECRET)) {
+    Write-Host "❌ Error: Missing required environment variables!" -ForegroundColor Red
+    Write-Host "Please set: MONGO_URI, GEMINI_API_KEY, NEXTAUTH_SECRET" -ForegroundColor Red
+    exit 1
+}
 
 $Root = $PSScriptRoot
 
