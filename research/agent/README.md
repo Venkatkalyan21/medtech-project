@@ -22,9 +22,7 @@ pip install -r requirements.txt
 
 ```python
 from agent_system import MedicalAgent
-
-# Initialize with your API key
-agent = MedicalAgent(api_key="AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU")
+\
 
 # Your friend's backend provides this data
 lab_results = {
@@ -158,7 +156,7 @@ response = {
 
 Your API key is already configured in the code:
 ```
-AIzaSyBICK4IOn5gJXn0l9n61OuHu3Ayc4ZLBKU
+
 ```
 
 ## 📝 Example Output
